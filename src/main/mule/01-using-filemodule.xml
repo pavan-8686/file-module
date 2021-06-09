@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="22cdb4da-55df-4344-9ec7-ace80de25318" renameTo="#[attributes.fileName ++ '.backup']" moveToDirectory="output" directory="input" recursive="true" primaryNodeOnly="false" applyPostActionWhenFailed="true" config-ref="File_Config" autoDelete="false" watermarkMode="DISABLED">
+		<file:connection workingDir="D:\FILE" />
+	</file:config>
+	<flow name="01-using-filemoduleFlow" doc:id="fc8415d4-55be-459b-9dfb-ddfb6aff1b59" >
+		<file:listener doc:name="On New or Updated File" doc:id="22cdb4da-55df-4344-9ec7-ace80de25318" config-ref="File_Config" moveToDirectory="output" renameTo="#[attributes.fileName ++ '.backup']" directory="input">
+			<scheduling-strategy >
+				<fixed-frequency frequency="5" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</file:listener>
+		<ee:transform doc:name="Transform Message" doc:id="77808c9a-ab0d-4fdb-9921-b18ca682af1e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
